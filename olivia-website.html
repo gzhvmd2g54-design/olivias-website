@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+   </title></title>
+
+   <link rel="stylesheet" href="style.css">
+ <!--/****************************
+          WOBBLE EFFECT BELOW
+    ****************************/-->
+   <script type="text/javascript">
+// <![CDATA[
+var speed=80; // speed of wobbling, lower is faster
+var height=3; // height of wobbling in pixels
+var alink=""; // page to link text to (set to ="" for no link)
+
+/****************************
+*    Wobbly Text Effect     *
+*(c) 2003-6 mf2fm web-design*
+*  http://www.mf2fm.com/rv  *
+* DON'T EDIT BELOW THIS BOX *
+****************************/
+var wobtxt, wobble, wobcnt=0;
+window.onload=function() { if (document.getElementById) {
+  var i, wobli;
+  wobble=document.getElementById("wobble");
+  wobtxt=wobble.firstChild.nodeValue;
+  while (wobble.childNodes.length) wobble.removeChild(wobble.childNodes[0]);
+  for (i=0; i<wobtxt.length; i++) {
+    wobli=document.createElement("span");
+    wobli.setAttribute("id", "wobb"+i);
+    wobli.style.position="relative";
+    wobli.appendChild(document.createTextNode(wobtxt.charAt(i)));
+    if (alink) {
+      wobli.style.cursor="pointer";
+      wobli.onclick=function() { top.location.href=alink; }
+    }
+    wobble.appendChild(wobli);
+  }
+  setInterval("wobbler()", speed);
+}}
+
+function wobbler() {
+  for (var i=0; i<wobtxt.length; i++) document.getElementById("wobb"+i).style.top=Math.round(height*Math.sin(i+wobcnt))+"px"
+  wobcnt++;
+}
+// ]]>
+</script>
+
+   <!--/****************************
+          BUBBLE EFFECT BELOW
+    ****************************/-->
+      <script type="text/javascript">
+// <![CDATA[
+var colours=new Array("#156", "#163", "#163", "#156", "#ccc"); // colours for top, right, bottom and left borders and background of bubbles
+var bubbles=66; // how many bubbles are moving at any given time
+var over_or_under="under"; // set to "over" for bubbles to always be on top, or "under" to allow them to float behind other objects
+
+/****************************
+*   JavaScript Bubble Bath  *
+*(c)2010-13 mf2fm web-design*
+*  http://www.mf2fm.com/rv  *
+* DON'T EDIT BELOW THIS BOX *
+****************************/
+
+var swide=1000;
+var shigh=1000;
+var bubb=new Array();
+var bubbx=new Array();
+var bubby=new Array();
+var bubbs=new Array();
+var boddie;
+var ie_version=(navigator.appVersion.indexOf("MSIE")!=-1)?parseFloat(navigator.appVersion.split("MSIE")[1]):false;
+
+function addLoadEvent(funky) {
+  var oldonload=window.onload;
+  if (typeof(oldonload)!='function') window.onload=funky;
+  else window.onload=function() {
+    if (oldonload) oldonload();
+    funky();
+  }
+}
+
+addLoadEvent(bubba);
+
+function bubba() { if (document.getElementById) {
+  var i, rats, div;
+  boddie=document.createElement("div");
+  boddie.style.position="fixed";
+  boddie.style.top="0px";
+  boddie.style.left="0px";
+  boddie.style.overflow="visible";
+  boddie.style.width="1px";
+  boddie.style.height="1px";
+  boddie.style.backgroundColor="transparent";
+  boddie.style.zIndex="0";
+  document.body.appendChild(boddie);
+  set_width();
+  for (i=0; i<bubbles; i++) {
+    rats=createDiv("3px", "3px");
+
+	div=createDiv("auto", "auto");
+    rats.appendChild(div);
+	div=div.style;
+    div.top="1px";
+    div.left="0px";
+	div.bottom="1px";
+	div.right="0px";
+	div.borderLeft="1px solid "+colours[3];
+	div.borderRight="1px solid "+colours[1];
+
+    div=createDiv("auto", "auto");
+	rats.appendChild(div);
+	div=div.style;
+    div.top="0px";
+    div.left="1px";
+	div.right="1px";
+	div.bottom="0px"
+	div.borderTop="1px solid "+colours[0];
+	div.borderBottom="1px solid "+colours[2];
+
+	div=createDiv("auto", "auto");
+	rats.appendChild(div);
+	div=div.style;
+	div.left="1px";
+	div.right="1px";
+    div.bottom="1px";
+	div.top="1px";
+	div.backgroundColor=colours[4];
+    if (ie_version && ie_version<10) div.filter="alpha(opacity=50)";
+    else div.opacity=0.5;
+
+    boddie.appendChild(rats);
+	bubb[i]=rats.style;
+	bubb[i].zIndex=(over_or_under=="over")?"1001":"0";
+  }
+  bubble();
+}}
+
+function bubble() {
+  var c;
+  for (c=0; c<bubbles; c++) if (!bubby[c] && Math.random()<0.333) {
+    bubb[c].left=(bubbx[c]=Math.floor(swide/6+Math.random()*swide/1.5)-10)+"px";
+    bubb[c].top=(bubby[c]=shigh)+"px";
+    bubb[c].width="3px";
+	bubb[c].height="3px"
+	bubb[c].visibility="visible";
+	bubbs[c]=3;
+    break;
+  }
+  for (c=0; c<bubbles; c++) if (bubby[c]) update_bubb(c);
+  setTimeout("bubble()", 40);
+}
+
+function update_bubb(i) {
+  if (bubby[i]) {
+    bubby[i]-=bubbs[i]/2+i%2;
+    bubbx[i]+=(i%5-2)/5;
+    if (bubby[i]>0 && bubbx[i]>0 && bubbx[i]<swide) {
+	  if (Math.random()<bubbs[i]/shigh*2 && bubbs[i]++<8) {
+		bubb[i].width=bubbs[i]+"px";
+		bubb[i].height=bubbs[i]+"px";
+	  }
+      bubb[i].top=bubby[i]+"px";
+      bubb[i].left=bubbx[i]+"px";
+    }
+    else {
+      bubb[i].visibility="hidden";
+      bubby[i]=0;
+      return;
+    }
+  }
+}
+
+window.onresize=set_width;
+function set_width() {
+  var sw_min=999999;
+  var sh_min=999999;
+  if (document.documentElement && document.documentElement.clientWidth) {
+    if (document.documentElement.clientWidth>0) sw_min=document.documentElement.clientWidth;
+    if (document.documentElement.clientHeight>0) sh_min=document.documentElement.clientHeight;
+  }
+  if (typeof(self.innerWidth)=='number' && self.innerWidth) {
+    if (self.innerWidth>0 && self.innerWidth<sw_min) sw_min=self.innerWidth;
+    if (self.innerHeight>0 && self.innerHeight<sh_min) sh_min=self.innerHeight;
+  }
+  if (document.body.clientWidth) {
+    if (document.body.clientWidth>0 && document.body.clientWidth<sw_min) sw_min=document.body.clientWidth;
+    if (document.body.clientHeight>0 && document.body.clientHeight<sh_min) sh_min=document.body.clientHeight;
+  }
+  if (sw_min==999999 || sh_min==999999) {
+    sw_min=800;
+    sh_min=600;
+  }
+  swide=sw_min;
+  shigh=sh_min;
+}
+
+function createDiv(height, width) {
+  var div=document.createElement("div");
+  div.style.position="absolute";
+  div.style.height=height;
+  div.style.width=width;
+  div.style.overflow="hidden";
+  div.style.backgroundColor="transparent";
+  return (div);
+}
+// ]]>
+      </script>
+
+  <!--/****************************
+          SEAWEED EFFECT BELOW
+    ****************************/-->
+    <script type="text/javascript">
+
+// <![CDATA[
+var speed=40; // lower number for faster animation
+var colour="#06402B"; // colour of weed
+var fronds=10; // how many fronds of seaweed, the more there are the slower the script runs
+var flength=0.66; // maximum height of the fronds compared to the screen height.  0.5 is half way to the top
+var fobble=6; // how much do the fronds wobble (8 is about the maximum sensible)
+var girth=40; // how thick are the fronds in pixels
+
+/***************************\
+*  Slithery Seaweed Effect  *
+*(c)2012-12 mf2fm web-design*
+*  http://www.mf2fm.com/rv  *
+* DON'T EDIT BELOW THIS BOX *
+\***************************/
+var fron=new Array();
+var frox=new Array();
+var frod=new Array();
+var frop=new Array();
+var froa=new Array();
+var frob=new Array();
+var swide, shigh;
+
+function addLoadEvent(funky) {
+  var oldonload=window.onload;
+  if (typeof(oldonload)!='function') window.onload=funky;
+  else window.onload=function() {
+    if (oldonload) oldonload();
+    funky();
+  }
+}
+
+addLoadEvent(slither);
+
+function inArray(needle, haystack) {
+  var i;
+  for (i=0; i<haystack.length; i++) {
+    if (haystack[i]==needle) return true;
+  }
+  return false;
+}
+
+function slither() { if (document.getElementById) {
+  var i, f, w, x=new Array();
+  set_width();
+  for (f=0; f<fronds; f++) {
+    fron[f]=new Array();
+    frod[f]=new Array();
+    frox[f]=new Array();
+    frop[f]=0;
+    froa[f]=0.03+0.03*Math.random();
+    do { i=Math.floor(girth/2*(2+Math.floor(2*(swide/girth-4)*Math.random()))); }
+    while ( inArray(i, x) )
+    x[f]=i;
+	frob[f]=createDov(x[f]);
+	document.body.appendChild(frob[f]);
+  }
+  for (f=0; f<fronds; f++) {
+    h=Math.floor(shigh/2*flength*(0.66+0.33*Math.random()));
+    for (i=0; i<=h; i++) {
+      w=2*Math.floor(girth/2*Math.sin(2.2*i/h));
+      frod[f][i]=0;
+      frox[f][i]=Math.floor(girth-w/2);
+      fron[f][i]=createDuv(w, frox[f][i], -2*(i-h));
+      frob[f].appendChild(fron[f][i]);
+    }
+    wavy_seaweed(f, i);
+  }
+}}
+
+function createDov(left) {
+  var d, s;
+  d=document.createElement("div");
+  s=d.style;
+  s.position="fixed";
+  s.bottom="0px";
+  s.left=left+"px";
+  s.overflow="visible";
+  s.width=2*girth+"px";
+  s.height=swide*flength+"px";
+  s.backgroundColor="transparent";
+  s.zIndex="998";
+  if (navigator.appName!="Microsoft Internet Explorer") s.opacity="0.66";
+  return (d);
+}
+
+function createDuv(width, left, bottom) {
+  var d, s;
+  d=document.createElement("div");
+  s=d.style;
+  s.position="absolute";
+  s.height="2px";
+  s.width=width+"px";
+  s.left=left+"px";
+  s.bottom=bottom+"px";
+  s.overflow="hidden";
+  s.backgroundColor=colour;
+  if (navigator.appName=="Microsoft Internet Explorer") s.filter="alpha(opacity=66)";
+  return (d);
+}
+
+function wavy_seaweed(f, h) {
+  var i, x, s;
+  s=h*h/fobble;
+  frod[f][h-2]=Math.sin(frop[f]);
+  fron[f][h-2].style.left=frox[f][h-2]+frod[f][h-2]+"px";
+  frop[f]+=froa[f]+Math.random()*0.005;
+  if (Math.random()>.95) {
+    froa[f]=froa[f]-0.015+0.03*Math.random();
+    if (froa[f]<0.03) froa[f]=0.03;
+    if (froa[f]>0.08) froa[f]=0.08;
+  }
+  for (i=0; i<h-2; i++) {
+    x=(1+i/s)*frod[f][i+1];
+    if (Math.floor(x)!=Math.floor(frod[f][i])) fron[f][i].style.left=frox[f][i]+Math.floor(x)+"px";
+    frod[f][i]=x;
+  }
+  setTimeout('wavy_seaweed('+f+','+h+')', speed);
+}
+
+window.onresize=set_width;
+function set_width() {
+  var sw_min=999999;
+  var sh_min=999999;
+  if (document.documentElement && document.documentElement.clientWidth) {
+    if (document.documentElement.clientWidth>0) sw_min=document.documentElement.clientWidth;
+    if (document.documentElement.clientHeight>0) sh_min=document.documentElement.clientHeight;
+  }
+  if (typeof(self.innerWidth)=='number' && self.innerWidth) {
+    if (self.innerWidth>0 && self.innerWidth<sw_min) sw_min=self.innerWidth;
+    if (self.innerHeight>0 && self.innerHeight<sh_min) sh_min=self.innerHeight;
+  }
+  if (document.body.clientWidth) {
+    if (document.body.clientWidth>0 && document.body.clientWidth<sw_min) sw_min=document.body.clientWidth;
+    if (document.body.clientHeight>0 && document.body.clientHeight<sh_min) sh_min=document.body.clientHeight;
+  }
+  if (sw_min==999999 || sh_min==999999) {
+    sw_min=800;
+    sh_min=600;
+  }
+  swide=sw_min;
+  shigh=sh_min;
+}
+// ]]>
+      </script>
+
+
+  </head>
+
+  <body style="background-color:rgb(43, 128, 103);">
+
+    <br>
+   <h1> <!--/TITLE/-->
+       
+    <!--/ 
+    ---OTHER OPTION FOR TITLE---
+    <div id="wobble">Olivia's Website</div></h1>
+    /-->
+    
+    <h1> 
+
+      <span id="wobb0" style="position: relative; cursor: pointer; top: 2px;">O</span>
+       <span id="wobb1" style="position: relative; cursor: pointer; top: -3px;">l</span>
+       <span id="wobb2" style="position: relative; cursor: pointer; top: 0px;">i</span>
+       <span id="wobb3" style="position: relative; cursor: pointer; top: 0px;">v</span>
+       <span id="wobb4" style="position: relative; cursor: pointer; top: 0px;">i</span>
+       <span id="wobb5" style="position: relative; cursor: pointer; top: -3px;">a'</span>
+       <span id="wobb6" style="position: relative; cursor: pointer; top: 2px;">s</span>
+       <span id="wobb7" style="position: relative; cursor: pointer; top: 3px;"> </span>
+       <span id="wobb8" style="position: relative; cursor: pointer; top: 3px;"> </span>
+       <span id="wobb9" style="position: relative; cursor: pointer; top: 2px;;">W</span>
+       <span id="wobb10" style="position: relative; cursor: pointer; top: 3px;">e</span>
+       <span id="wobb11" style="position: relative; cursor: pointer; top: -1px;">b</span>
+       <span id="wobb12" style="position: relative; cursor: pointer; top: 2px;">s</span>
+       <span id="wobb13" style="position: relative; cursor: pointer; top: -1px;">i</span>
+       <span id="wobb14" style="position: relative; cursor: pointer; top: -2px;">t</span>
+       <span id="wobb15" style="position: relative; cursor: pointer; top: -2px;">e</span>
+    <div colour="#06402B" id="wobble">                 </div></h1>
+
+     <h2>
+       𓆝 𓆟 𓆞 𓆟 𓆝
+    </h2>
+    
+    
+    <br>
+
+    <p style="text-align: center;">
+    <a href="https://letterboxd.com/oliviabusch/" target="_blank">Letterboxd</a>
+    <a href="https://www.goodreads.com/user/show/202696678-reader" target="_blank">Goodreads</a>
+  </p>
+
+  <br><br><br>
+ <p style="color:rgb(129, 182, 165)"><b>work in progress</b></p>
+ <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+
+
+
+  </body>
+</html>
