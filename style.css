@@ -1,0 +1,17 @@
+body {
+  background-color: rgb(43, 128, 103);
+}
+h1 {
+  color: rgb(158, 196, 184);
+  font-family: sansserif;
+  font-style: italic;
+  text-align: center;
+}
+h2 {
+  color: rgb(158, 196, 184);
+  font-family: sansserif;
+  text-align: center;
+}
+a {
+  text-align: center;
+}
